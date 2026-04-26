@@ -1,0 +1,58 @@
+<!--
+なぜ resources/static に入れるとうまくいく？
+👉 Spring Bootが「ここにあるファイルはそのまま配信する（静的ファイル置き場）」と決めているから
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Task App</title>
+</head>
+<body>
+
+<h1>タスク追加</h1>
+
+<input type="text" id="taskInput" placeholder="タスクを入力">
+<button onclick="addTask()">追加</button>
+
+<h2>タスク一覧</h2>
+<ul id="taskList"></ul>
+
+<script>
+    async function addTask() {
+        const input = document.getElementById("taskInput");
+        const task = input.value;
+
+        await fetch("http://localhost:8080/tasks", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(task)
+        });
+
+        input.value = "";
+        loadTasks();
+    }
+
+    async function loadTasks() {
+        const response = await fetch("http://localhost:8080/tasks");
+        const tasks = await response.json();
+
+        const list = document.getElementById("taskList");
+        list.innerHTML = "";
+
+        tasks.forEach(t => {
+            const li = document.createElement("li");
+            li.textContent = t;
+            list.appendChild(li);
+        });
+    }
+
+    // 初期読み込み
+    loadTasks();
+</script>
+
+</body>
+</html>
