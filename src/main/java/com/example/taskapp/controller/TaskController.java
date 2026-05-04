@@ -43,4 +43,11 @@ public class TaskController {
         task.setCompleted(false);
         tasks.add(task);
     }
+
+    @DeleteMapping("/tasks/{id}")
+    //PathVariableでidを取得：/tasks/3 ならid=3
+    public void deleteTask(@PathVariable int id) {
+        //条件に合致したらtaskを削除
+        tasks.removeIf(task -> task.getId() == id);
+    }
 }

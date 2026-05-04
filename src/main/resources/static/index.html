@@ -53,9 +53,26 @@
 
         tasks.forEach(t => {
             const li = document.createElement("li");
-            li.textContent = t.title;
+            li.textContent = `${t.id}: ${t.title}`;
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = `削除`;
+            //() => : アロー関数。後ろの処理を実行する
+            //deleteBtn.onclick = 関数の処理
+            //というように、JavaScriptでは関数を値として渡せる
+            //ここ重要！！！
+            deleteBtn.onclick = () => deleteTask(t.id);
+            li.appendChild(deleteBtn);
+
             list.appendChild(li);
         });
+    }
+
+    async function deleteTask(id) {
+        await fetch(`/tasks/${id}`, {
+            method: "DELETE"
+        });
+        await loadTasks();
     }
 
     // 初期読み込み
