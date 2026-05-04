@@ -4,7 +4,7 @@
 -->
 
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>Task App</title>
@@ -14,7 +14,7 @@
 <h1>タスク追加</h1>
 
 <input type="text" id="taskInput" placeholder="タスクを入力">
-<button onclick="addTask()">追加</button>
+<button type="button" onclick="addTask()">追加</button>
 
 <h2>タスク一覧</h2>
 <ul id="taskList"></ul>
@@ -24,12 +24,15 @@
         const input = document.getElementById("taskInput");
         const task = input.value;
 
-        await fetch("http://localhost:8080/tasks", {
+        await fetch("/tasks", {
+            //送信
             method: "POST",
+            //JSON形式でデータを送るよ
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(task)
+            //送る中身
+            body: JSON.stringify({title: task})
         });
 
         input.value = "";
@@ -37,7 +40,12 @@
     }
 
     async function loadTasks() {
-        const response = await fetch("http://localhost:8080/tasks");
+        const response = await fetch("/tasks");
+        /*
+        もしJSON.parse使うなら👇
+        const text = await response.text();
+        const tasks = JSON.parse(text);
+         */
         const tasks = await response.json();
 
         const list = document.getElementById("taskList");
@@ -45,7 +53,7 @@
 
         tasks.forEach(t => {
             const li = document.createElement("li");
-            li.textContent = t;
+            li.textContent = t.title;
             list.appendChild(li);
         });
     }

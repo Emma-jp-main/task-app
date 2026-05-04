@@ -1,5 +1,6 @@
 package com.example.taskapp.controller;
 
+import com.example.taskapp.model.Task;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -8,7 +9,8 @@ import java.util.List;
 //「このクラスはAPIですよ」って宣言。JSONを返す
 @RestController
 public class TaskController {
-    private List<String> tasks = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
+    private int nextId = 1;
 
     //POST /tasks → データを追加
         //フロント（HTML）
@@ -26,13 +28,19 @@ public class TaskController {
     //自動でJava ↔ JSON変換されてる
     //これはSpring Bootが内部でやってる
     @GetMapping("/tasks")
-    public List<String> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
     @PostMapping("/tasks")
-    //RequestBody > リクエストの中身を取り出す
-    public void addTask(@RequestBody String task) {
+    //RequestBody > リクエストの中身を取り出す(JSON → Taskオブジェクト変換)
+    public void addTask(@RequestBody java.util.Map<String, String> body) {
+        System.out.println("受信Body: " + body);
+        Task task = new Task();
+        task.setId(nextId++);
+        //上でMapを作らなくても、@RequestBody Task taskとすれば本来は自動的にsetTitleされるはず
+        task.setTitle(body.get("title"));
+        task.setCompleted(false);
         tasks.add(task);
     }
 }
