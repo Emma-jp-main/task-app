@@ -50,4 +50,10 @@ public class TaskController {
         //条件に合致したらtaskを削除
         tasks.removeIf(task -> task.getId() == id);
     }
+
+    //toggle = 切り替え
+    @PatchMapping("/tasks/{id}/toggle")
+    public void toggleTask(@PathVariable int id) {
+
+    }
 }
