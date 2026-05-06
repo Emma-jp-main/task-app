@@ -36,9 +36,10 @@
         });
 
         input.value = "";
-        loadTasks();
+        await loadTasks();
     }
 
+    //タスク一覧を更新して表示
     async function loadTasks() {
         const response = await fetch("/tasks");
         /*
@@ -64,6 +65,11 @@
             deleteBtn.onclick = () => deleteTask(t.id);
             li.appendChild(deleteBtn);
 
+            const toggleButton = document.createElement("button");
+            toggleButton.textContent = t.completed ? "完了" : "未完了";
+            toggleButton.onclick = () => toggleTask(t.id);
+            li.appendChild(toggleButton);
+
             list.appendChild(li);
         });
     }
@@ -72,6 +78,13 @@
         await fetch(`/tasks/${id}`, {
             method: "DELETE"
         });
+        await loadTasks();
+    }
+
+    async function toggleTask(id) {
+        await fetch(`/tasks/${id}/toggle`, {
+            method: "PATCH",
+        })
         await loadTasks();
     }
 

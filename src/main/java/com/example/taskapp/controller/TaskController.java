@@ -54,6 +54,12 @@ public class TaskController {
     //toggle = 切り替え
     @PatchMapping("/tasks/{id}/toggle")
     public void toggleTask(@PathVariable int id) {
-
+        //idを受け取って、そのタスクのtrueとfalseを入れ替える
+        for (Task task : tasks) {
+            if (task.getId() == id) {
+                task.setCompleted(!task.isCompleted());
+                break;
+            }
+        }
     }
 }
