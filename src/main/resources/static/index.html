@@ -65,10 +65,17 @@
             deleteBtn.onclick = () => deleteTask(t.id);
             li.appendChild(deleteBtn);
 
-            const toggleButton = document.createElement("button");
-            toggleButton.textContent = t.completed ? "完了" : "未完了";
-            toggleButton.onclick = () => toggleTask(t.id);
-            li.appendChild(toggleButton);
+            const toggleBtn = document.createElement("button");
+            //三項演算子
+            toggleBtn.textContent = t.completed ? "完了" : "未完了";
+            /*
+            アロー関数をつけることで、ボタンが押されたらtoggleTaskを実行してねという意味になる。
+            toggleBtn.onclick = toggleTask(t.id);としてはいけない。
+            いまloadTasksの中でtoggleTaskを呼んでいるが、toggleTaskのなかでloadTasksもよばれているため。
+             */
+            toggleBtn.onclick = () => toggleTask(t.id);
+            li.appendChild(toggleBtn);
+
 
             list.appendChild(li);
         });
@@ -83,8 +90,8 @@
 
     async function toggleTask(id) {
         await fetch(`/tasks/${id}/toggle`, {
-            method: "PATCH",
-        })
+            method: "PATCH"
+        });
         await loadTasks();
     }
 

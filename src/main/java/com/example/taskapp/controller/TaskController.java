@@ -58,7 +58,6 @@ public class TaskController {
         for (Task task : tasks) {
             if (task.getId() == id) {
                 task.setCompleted(!task.isCompleted());
-                break;
             }
         }
     }
