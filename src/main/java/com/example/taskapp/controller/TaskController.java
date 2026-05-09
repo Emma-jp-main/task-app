@@ -1,16 +1,21 @@
 package com.example.taskapp.controller;
 
+import com.example.taskapp.dto.TaskRequest;
 import com.example.taskapp.model.Task;
+import com.example.taskapp.repository.TaskRepository;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 //「このクラスはAPIですよ」って宣言。JSONを返す
 @RestController
 public class TaskController {
-    private List<Task> tasks = new ArrayList<>();
-    private int nextId = 1;
+    private final TaskRepository taskRepository;
+
+    public TaskController(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
 
     //POST /tasks → データを追加
         //フロント（HTML）
@@ -29,36 +34,33 @@ public class TaskController {
     //これはSpring Bootが内部でやってる
     @GetMapping("/tasks")
     public List<Task> getTasks() {
-        return tasks;
+        //DBはデータ保存については強いが、並び順などは自分で指定する必要がある
+        return taskRepository.findAllByOrderByIdAsc();
     }
 
     @PostMapping("/tasks")
     //RequestBody > リクエストの中身を取り出す(JSON → Taskオブジェクト変換)
-    public void addTask(@RequestBody java.util.Map<String, String> body) {
-        System.out.println("受信Body: " + body);
+    //Dtoでバリデーションしたものはここで@Validを書かないと実行されない
+    public Task addTask(@Valid @RequestBody TaskRequest taskRequest) {
         Task task = new Task();
-        task.setId(nextId++);
-        //上でMapを作らなくても、@RequestBody Task taskとすれば本来は自動的にsetTitleされるはず
-        task.setTitle(body.get("title"));
+        //インスタンス化した際に、idは自動入力される(@GenerateValue）
+        task.setTitle(taskRequest.getTitle());
         task.setCompleted(false);
-        tasks.add(task);
+        return taskRepository.save(task);
     }
 
     @DeleteMapping("/tasks/{id}")
     //PathVariableでidを取得：/tasks/3 ならid=3
     public void deleteTask(@PathVariable int id) {
-        //条件に合致したらtaskを削除
-        tasks.removeIf(task -> task.getId() == id);
+        taskRepository.deleteById(id);
     }
 
     //toggle = 切り替え
     @PatchMapping("/tasks/{id}/toggle")
     public void toggleTask(@PathVariable int id) {
-        //idを受け取って、そのタスクのtrueとfalseを入れ替える
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                task.setCompleted(!task.isCompleted());
-            }
-        }
+        //orElseThrow() →見つからなければエラー
+        Task task = taskRepository.findById(id).orElseThrow();
+        task.setCompleted(!task.isCompleted());
+        taskRepository.save(task);
     }
 }

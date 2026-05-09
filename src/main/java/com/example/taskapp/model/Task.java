@@ -2,11 +2,20 @@ package com.example.taskapp.model;
 
 import jakarta.persistence.*;
 
+//JPA/Hibernateを利用（↔JDBC Template）
+//↑Entityを利用
+
+
+//DBテーブルと対応する特別なクラスであることを明示
+//taskクラスをtaskテーブルに
 @Entity
 public class Task {
+    //主キー（PK）の明示
     @Id
+    //ID自動生成
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String title;
     private boolean completed;
 
