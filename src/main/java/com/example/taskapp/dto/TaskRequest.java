@@ -2,6 +2,7 @@ package com.example.taskapp.dto;
 
 //データの送受信に特化したファイル
 //なのでバリデーションも行っちゃってOK
+//フィールドが多い場合はMapperクラスを作成して仲介させる
 import jakarta.validation.constraints.NotBlank;
 
 public class TaskRequest {
