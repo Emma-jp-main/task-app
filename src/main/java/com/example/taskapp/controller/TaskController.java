@@ -10,12 +10,15 @@ import java.util.List;
 
 //「このクラスはAPIですよ」って宣言。JSONを返す
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/tasks")
 public class TaskController {
     private final TaskRepository taskRepository;
 
     public TaskController(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
+
 
     //POST /tasks → データを追加
         //フロント（HTML）
@@ -32,13 +35,13 @@ public class TaskController {
     //URLの後ろに/tasksと入るとtaskのJSONを返す
     //自動でJava ↔ JSON変換されてる
     //これはSpring Bootが内部でやってる
-    @GetMapping("/tasks")
+    @GetMapping
     public List<Task> getTasks() {
         //DBはデータ保存については強いが、並び順などは自分で指定する必要がある
         return taskRepository.findAllByOrderByIdAsc();
     }
 
-    @PostMapping("/tasks")
+    @PostMapping
     //RequestBody > リクエストの中身を取り出す(JSON → Taskオブジェクト変換)
     //Dtoでバリデーションしたものはここで@Validを書かないと実行されない
     public Task addTask(@Valid @RequestBody TaskRequest taskRequest) {
@@ -49,14 +52,14 @@ public class TaskController {
         return taskRepository.save(task);
     }
 
-    @DeleteMapping("/tasks/{id}")
+    @DeleteMapping("/{id}")
     //PathVariableでidを取得：/tasks/3 ならid=3
     public void deleteTask(@PathVariable int id) {
         taskRepository.deleteById(id);
     }
 
     //toggle = 切り替え
-    @PatchMapping("/tasks/{id}/toggle")
+    @PatchMapping("/{id}/toggle")
     public void toggleTask(@PathVariable int id) {
         //orElseThrow() →見つからなければエラー
         Task task = taskRepository.findById(id).orElseThrow();

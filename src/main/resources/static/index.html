@@ -7,7 +7,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Task App</title>
+    <title>Task TaskApp</title>
 </head>
 <body>
 
@@ -24,7 +24,7 @@
         const input = document.getElementById("taskInput");
         const task = input.value;
 
-        await fetch("/tasks", {
+        await fetch("/api/tasks", {
             //送信
             method: "POST",
             //JSON形式でデータを送るよ
@@ -41,7 +41,7 @@
 
     //タスク一覧を更新して表示
     async function loadTasks() {
-        const response = await fetch("/tasks");
+        const response = await fetch("/api/tasks");
         /*
         もしJSON.parse使うなら👇
         const text = await response.text();
@@ -82,14 +82,14 @@
     }
 
     async function deleteTask(id) {
-        await fetch(`/tasks/${id}`, {
+        await fetch(`/api/tasks/${id}`, {
             method: "DELETE"
         });
         await loadTasks();
     }
 
     async function toggleTask(id) {
-        await fetch(`/tasks/${id}/toggle`, {
+        await fetch(`/api/tasks/${id}/toggle`, {
             method: "PATCH"
         });
         await loadTasks();
